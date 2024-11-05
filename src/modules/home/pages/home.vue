@@ -2,12 +2,12 @@
   <div class="overflow-auto flex flex-col bg-white">
     <main class="flex-grow flex flex-col">
       <section
-        class="text-white h-[700px] bg-white h-full w-full flex justify-between relative item-center max-md:justify-center max-md:py-40"
+        class="text-white  bg-white h-[44rem] w-full flex justify-between relative item-center max-md:justify-center"
         id="container_bg"
       >
-        <div class="px-4 text-left py-5 flex flex-1 flex-col max-md:items-center absolute lg:top-[30%] lg:left-[16%]">
+        <div class=" text-left px-4  flex flex-1 flex-col max-md:items-center absolute top-[20%] lg:top-[28%] lg:left-[12%]">
           <h1
-            class="text-5xl font-bold mb-4 !leading-snug h-[8rem] max-md:text-2xl text-transparent text-3xl bg-clip-text bg-gradient-to-r from-blue-400 to-pink-600 font-extrabold"
+            class="text-5xl font-bold mb-4 !leading-snug h-[8rem] max-md:text-2xl text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-pink-600 "
           >
             <span :ref="setRefs('web_title')"></span>
           </h1>
@@ -184,7 +184,7 @@ onMounted(() => {
   --color: #e1e1e1;
   background-color: #000;
   background-image: url(../static/building.svg);
-  background-size: 40% 60%;
+  background-size: 35% 55%;
   background-position: right;
   background-repeat: no-repeat;
 

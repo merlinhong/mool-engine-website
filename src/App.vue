@@ -8,7 +8,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <el-container direction="vertical">
+  <el-container direction="vertical" class="max-md:text-[14px]">
     
     <RouterView></RouterView>
   </el-container>
@@ -17,9 +17,6 @@ onMounted(() => {
 <style scoped>
 html {
   background-color: #f1f1f1;
-  body {
-    margin: 0;
-  }
 }
 .el-container{
   width: 100%;height: 100%;
