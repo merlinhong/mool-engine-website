@@ -180,8 +180,8 @@ class ApiService<
 
   private loadModules(): ServiceModules {
     // 自动导入所有模块
-    const moduleFiles = import.meta.glob<{ default: IUrlConfig }>("@/service/!(index).ts", { eager: true });
-    console.log(moduleFiles);
+    const moduleFiles = import.meta.glob<{ default: IUrlConfig }>("/src/service/!(index).ts", { eager: true });
+    console.log(3333,moduleFiles);
 
     const modules = {} as Record<string, IUrlConfig>;
 

@@ -39,7 +39,7 @@ export default ({ mode }) => {
           "vue",
           "vue-router",
           {
-            "@/service": ["service"],
+            "@/service/index": ["service"],
           },
         ],
         resolvers: [
@@ -47,7 +47,7 @@ export default ({ mode }) => {
           // 自动导入图标组件
           IconsResolver({}),
         ],
-        dts: "auto-import.d.ts",
+        dts: "auto-imports.d.ts",
       }),
       Components({
         resolvers: [
