@@ -1,0 +1,216 @@
+<template>
+  <div class="overflow-auto flex flex-col bg-white">
+    <main class="flex-grow flex flex-col">
+      <section
+        class="text-white bg-white h-[82vh] w-full flex justify-between relative item-center max-md:justify-center max-md:h-[50vh]"
+        id="container_bg"
+      >
+        <div
+          class="text-left px-4 flex flex-1 flex-col max-md:items-center absolute top-[30%] lg:top-[28%] lg:left-[12%]"
+        >
+          <h1
+            class="text-5xl font-bold mb-4 !leading-snug h-[8rem] max-md:h-[4rem] max-md:text-2xl text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-pink-600"
+          >
+            <span :ref="setRefs('web_title')"></span>
+          </h1>
+          <p class="text-xl mb-16">使用我们的低代码平台，快速创建应用程序,同时支持导出源码进行二次开发</p>
+          <div class="flex">
+            <el-button size="large" type="primary" class="w-[11rem] !h-[3.2rem] !text-xl !rounded-[25px]"
+              >立即体验 <i-ep-ArrowRight class="align-middle"
+            /></el-button>
+            <el-button size="large" type="primary" plain class="w-[11rem] !h-[3.2rem] !text-xl !rounded-[25px]"
+              >产品文档
+            </el-button>
+          </div>
+        </div>
+        <!-- <div class="max-md:hidden h-full"> -->
+        <!-- <svg class="h-full flex-1 max-md:hidden ">
+            <use xlink:href="#icon-building" />
+          </svg> -->
+        <!-- </div> -->
+      </section>
+      <section class="py-16 bg-gray-100">
+        <div class="container mx-auto px-4">
+          <h2 class="text-3xl font-bold text-center mb-8">平台特色</h2>
+          <el-row :gutter="20">
+            <el-col v-for="feature in features" :key="feature.title" :span="8">
+              <el-card
+                class="bg-white rounded-lg shadow-md h-full relative "
+                v-motion="{
+                  init: {
+                    opacity: 0,
+                    y: 100,
+                  },
+                  visibleOnce: { opacity: 1, y: 0 },
+                  duration: 1000,
+                  hover: {
+                    scale: 1.2,
+                  },
+                }"
+              >
+                <el-icon :size="40" class="mb-4 text-blue-600">
+                  <component :is="feature.icon"></component>
+                </el-icon>
+                <h3 class="text-xl font-semibold mb-2">{{ feature.title }}</h3>
+                <p class="text-gray-600">{{ feature.description }}</p>
+              </el-card>
+            </el-col>
+          </el-row>
+        </div>
+      </section>
+      <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+          <h2 class="text-3xl font-bold text-center mb-8">客户评价</h2>
+          <el-carousel :interval="5000" type="card" height="300px">
+            <el-carousel-item v-for="testimonial in testimonials" :key="testimonial.name">
+              <el-card class="h-full flex flex-col justify-center p-6">
+                <p class="text-lg mb-4">"{{ testimonial.content }}"</p>
+                <div class="font-semibold">{{ testimonial.name }}</div>
+                <div class="text-gray-600">{{ testimonial.position }}</div>
+              </el-card>
+            </el-carousel-item>
+          </el-carousel>
+        </div>
+      </section>
+    </main>
+    <el-footer class="bg-gray-800 text-white py-8 h-fit mt-auto">
+      <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <h3 class="text-xl font-semibold mb-4">联系我们</h3>
+            <p>地址: 某某市某某区某某街123号</p>
+            <p>电话: 123-456-7890</p>
+            <p>邮箱: support@lowcodeplatform.com</p>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold mb-4">快速链接</h3>
+            <el-menu class="space-y-2 !bg-transparent w-fit !border-r-0" mode="vertical" text-color="white">
+              <el-menu-item>关于我们</el-menu-item>
+              <el-menu-item>产品功能</el-menu-item>
+              <el-menu-item>定价方案</el-menu-item>
+              <el-menu-item>帮助文档</el-menu-item>
+            </el-menu>
+          </div>
+          <div>
+            <h3 class="text-xl font-semibold mb-4">关注我们</h3>
+            <div class="flex space-x-6">
+              <el-button type="text" class="text-white p-0 hover:text-blue-300">
+                <el-icon :size="28">
+                  <ChatDotRound />
+                </el-icon>
+              </el-button>
+              <el-button type="text" class="text-white p-0 hover:text-blue-300">
+                <el-icon :size="28">
+                  <ChatRound />
+                </el-icon>
+              </el-button>
+              <el-button type="text" class="text-white p-0 hover:text-blue-300">
+                <el-icon :size="28">
+                  <Platform />
+                </el-icon>
+              </el-button>
+            </div>
+          </div>
+        </div>
+        <div class="mt-8 text-center">
+          <p>&copy; 2023 LowCode Platform. 保留所有权利.</p>
+        </div>
+      </div>
+    </el-footer>
+  </div>
+</template>
+
+<script setup lang="ts">
+import { ref, watch } from "vue";
+import { Cpu, Brush, Stopwatch } from "@element-plus/icons-vue";
+import { useMool } from "@/mool";
+import Typed, { type TypedOptions } from "typed.js";
+import { onMounted } from "vue";
+const testimonials = [
+  {
+    content: "这个低代码平台极大地提高了我们的开发效率，让我们能够快速响应市场需求。",
+    name: "张三",
+    position: "技术总监, ABC公司",
+  },
+  {
+    content: "界面直观，功能强大，即使是非技术人员也能轻松上手。",
+    name: "李四",
+    position: "产品经理, XYZ科技",
+  },
+  {
+    content: "客户支持团队反应迅速，帮助我们快速解决了遇到的问题。",
+    name: "王五",
+    position: "CTO, 创新创业公司",
+  },
+];
+const features = [
+  {
+    title: "拖拽式界面构建",
+    description: "通过简单的拖拽操作，快速创建美观的用户界面。",
+    icon: Brush,
+  },
+  {
+    title: "强大的逻辑引擎",
+    description: "使用可视化流程设计器，轻松实现复杂的业务逻辑。",
+    icon: Cpu,
+  },
+  {
+    title: "快速部署",
+    description: "一键部署应用，节省开发时间，加快上线速度。",
+    icon: Stopwatch,
+  },
+];
+const { refs, setRefs } = useMool();
+const options: TypedOptions = {
+  strings: [`MoolEngine低代码引擎 ^500 <br/>专为开发者定制的低代码平台`],
+  typeSpeed: 80,
+  backSpeed: 0,
+  showCursor: true,
+  onComplete(self) {
+    setTimeout(() => {
+      self.destroy();
+      new Typed(refs.web_title, options);
+    }, 2000);
+  },
+};
+onMounted(() => {
+  window.particlesJS.load("container_bg", new URL("../particles.json", import.meta.url).href, function () {
+    console.log("回调 - particles.js 配置已加载");
+  });
+  new Typed(refs.web_title, options);
+});
+</script>
+
+<style scoped>
+/* 这里可以添加页面级的样式 */
+#container_bg {
+  --color: #e1e1e1;
+  background-color: #000;
+  background-image: url(../static/building.svg);
+  background-size: 35% 55%;
+  background-position: right;
+  background-repeat: no-repeat;
+
+  /*  */
+  /* transform: rotate(45deg); 旋转45度 */
+  /* transform-origin: center; 旋转中心点为元素中心 */
+  /* background: #000000;
+  --gap: 5em;
+  --line: 1px;
+  --color: rgba(255, 255, 255, 0.2);
+
+  background-image: linear-gradient(
+      -90deg,
+      transparent calc(var(--gap) - var(--line)),
+      var(--color) calc(var(--gap) - var(--line) + 1px),
+      var(--color) var(--gap)
+    ),
+    linear-gradient(
+      0deg,
+      transparent calc(var(--gap) - var(--line)),
+      var(--color) calc(var(--gap) - var(--line) + 1px),
+      var(--color) var(--gap)
+    );
+  background-size: var(--gap) var(--gap); */
+}
+</style>
