@@ -1,7 +1,7 @@
-import api from "src/service/api";
-import pushRecord f@/service/shopping.jspushRecord";
-import shopping from "src/service/shopping";
-import user from "src/service/user";import axios, {
+
+
+
+import axios, {
   AxiosRequestConfig,
   AxiosProgressEvent,
   ResponseType,
