@@ -62,9 +62,29 @@ export function depsOptimizer(options: DepOptimizerOptions = {}): PluginOption[]
   }
 
   return [
+    federation({
+      name: "mf",
+      filename: "remoteEntry.js",
+      exposes: {
+        vue: "vue",
+        "vue-router": "vue-router",
+        "element-plus": "element-plus",
+        pinia: "pinia",
+        axios: "axios",
+        "monaco-editor": "monaco-editor",
+      },
+      //   shared: {
+      //     vue: { singleton: true },
+      //     "vue-router": { singleton: true },
+      //     "element-plus": { singleton: true },
+      //     pinia: { singleton: true },
+      //     axios: { singleton: true },
+      //     "monaco-editor": { singleton: true },
+      //   },
+    }),
     {
       name: "vite-plugin-deps-optimizer",
-        enforce: "post",
+      enforce: "post",
 
       configResolved(resolvedConfig) {
         config = resolvedConfig;
@@ -96,25 +116,5 @@ export function depsOptimizer(options: DepOptimizerOptions = {}): PluginOption[]
         }
       },
     },
-    federation({
-      name: "mf",
-      filename: "remoteEntry.js",
-      exposes: {
-        vue: "vue",
-        "vue-router": "vue-router",
-        "element-plus": "element-plus",
-        pinia: "pinia",
-        axios: "axios",
-        "monaco-editor": "monaco-editor",
-      },
-      shared: {
-        vue: { singleton: true },
-        "vue-router": { singleton: true },
-        "element-plus": { singleton: true },
-        pinia: { singleton: true },
-        axios: { singleton: true },
-        "monaco-editor": { singleton: true },
-      },
-    }),
   ];
 } 
