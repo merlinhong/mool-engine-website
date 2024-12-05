@@ -348,3 +348,4 @@ export function createServiceWithModules<T extends Record<string, any>, G extend
   return apiService as ApiServiceWithModules<T, G, M>;
 }
 export default ApiService;
+export const request = new ApiService();

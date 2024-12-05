@@ -59,8 +59,6 @@ declare module 'vue' {
     ElTag: typeof import('element-plus/es')['ElTag']
     ElText: typeof import('element-plus/es')['ElText']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
-    HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
-    IButton: typeof import('./src/components/IButton.vue')['default']
     IEpArrowDown: typeof import('~icons/ep/arrow-down')['default']
     IEpArrowLeft: typeof import('~icons/ep/arrow-left')['default']
     IEpArrowRight: typeof import('~icons/ep/arrow-right')['default']

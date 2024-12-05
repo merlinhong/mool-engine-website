@@ -12,12 +12,15 @@ import seoPrerender from "vite-plugin-seo-prerender";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import ElementPlus from "unplugin-element-plus/vite";
+import federation from "@originjs/vite-plugin-federation";
 
 import { mool } from "./src/mool/vite-plugin/src/index";
 // import basicSsl from '@vitejs/plugin-basic-ssl'
 // import tailwindcss from 'tailwindcss'
 // import autoprefixer from 'autoprefixer'
 import { serviceTypesPlugin } from "./serviceTypesPlugin";
+import { depsOptimizer } from './src/plugins/vite-plugin-deps-optimizer'
+
 function toPath(dir: string) {
   return fileURLToPath(new URL(dir, import.meta.url));
 }
@@ -63,21 +66,25 @@ export default ({ mode }) => {
       Icons({
         autoInstall: true,
       }),
-      // seo预渲染插件
-      seoPrerender({
-        hashHistory: true,
-        puppeteer: {}, // puppeteer参数配置，可选
-        routes: ["/page", "/login"], // 需要生成的路由，必填
-        removeStyle: true, // 是否移除多余样式，默认true。在启动服务vite preview时会产生一些多余样式，如若丢失样式可设置为false
-        callback: (content, route) => {
-          // 可对当前页面html内容进行一些替换等处理
-          // 一些处理逻辑...
-          return content;
-        },
-        publicHtml: true,
-      }),
+      // // seo预渲染插件
+      // seoPrerender({
+      //   hashHistory: true,
+      //   puppeteer: {}, // puppeteer参数配置，可选
+      //   routes: ["/page", "/login"], // 需要生成的路由，必填
+      //   removeStyle: true, // 是否移除多余样式，默认true。在启动服务vite preview时会产生一些多余样式，如若丢失样式可设置为false
+      //   callback: (content, route) => {
+      //     // 可对当前页面html内容进行一些替换等处理
+      //     // 一些处理逻辑...
+      //     return content;
+      //   },
+      //   publicHtml: true,
+      // }),
       serviceTypesPlugin({
         dts: "service.d.ts",
+      }),
+      depsOptimizer({
+        exclude: ['**/node_modules/**', '**/.git/**'],
+        include: ['**/*.vue', '**/*.tsx', '**/*.ts']
       }),
       
     ],
@@ -88,6 +95,10 @@ export default ({ mode }) => {
       },
     },
     build: {
+      target: "esnext",
+      modulePreload: {
+        polyfill: true,
+      },
       minify: "esbuild",
       outDir: env.VITE_APP_OUTDIR,
       // terserOptions: {
@@ -152,5 +163,21 @@ export default ({ mode }) => {
       //   ],
       // },
     },
+    optimizeDeps: {
+      // 使用模块联邦来处理依赖
+      disabled: false,
+    },
+    preview: {
+      host: "0.0.0.0",
+      port: 5001,
+    },
+    // experimental: {
+    //   renderBuiltUrl(filename: string, { hostType, type, hostId }) {
+    //     if (type === 'public') {
+    //       return `/${filename}`
+    //     }
+    //     return filename
+    //   }
+    // }
   });
 };
