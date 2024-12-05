@@ -18,7 +18,6 @@ import { mool } from "./src/mool/vite-plugin/src/index";
 // import tailwindcss from 'tailwindcss'
 // import autoprefixer from 'autoprefixer'
 import { serviceTypesPlugin } from "./serviceTypesPlugin";
-
 function toPath(dir: string) {
   return fileURLToPath(new URL(dir, import.meta.url));
 }
@@ -40,6 +39,7 @@ export default ({ mode }) => {
           "vue-router",
           {
             "@/service/index": ["service"],
+            '@/mool/hooks/useEffect':['useEffect']
           },
         ],
         resolvers: [
@@ -79,6 +79,7 @@ export default ({ mode }) => {
       serviceTypesPlugin({
         dts: "service.d.ts",
       }),
+      
     ],
     resolve: {
       alias: {

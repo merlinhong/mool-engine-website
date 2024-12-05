@@ -5,6 +5,8 @@ declare global {
     
     api: typeof import("./src/service/api")['default'];
     
+    audit: typeof import("./src/service/audit")['default'];
+    
     bb: typeof import("./src/service/bb")['default'];
     
     pushRecord: typeof import("./src/service/pushRecord")['default'];

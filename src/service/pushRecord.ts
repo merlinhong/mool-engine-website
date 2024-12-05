@@ -10,4 +10,11 @@ export default {
     root: "VITE_APP_BASE_API_BASE",
     data: {} as { uuid: string },
   },
+  export:{
+    url:'/v1/export',
+    type:'get',
+    contentType:'application/x-www-form-urlencoded',
+    root:'VITE_APP_BASE_API_BASE',
+    data:{}as {ids:string;querys:string}
+  }
 } satisfies IApiConfig;

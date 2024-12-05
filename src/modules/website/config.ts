@@ -1,3 +1,5 @@
+console.log(import("./ball/ball"));
+
 export default {
   pages: [
     
@@ -10,12 +12,8 @@ export default {
       component: () => import("./demo/code1.vue"),
     },
     {
-      path: "/index1",
-      component: () => import("./admin/index1.vue"),
-    },
-    {
       path: "/ball",
-      component: () => import("./ceshi/ball.tsx"),
+      component: () => import("./ball/ball")
     }
   ],
 };
