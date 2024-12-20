@@ -1,4 +1,3 @@
-import { FunctionalComponent } from "vue";
 import { AuditStore } from "./store";
 import {
   ElForm,
@@ -14,6 +13,7 @@ import {
   ElMessage,
 } from "element-plus";
 import { state } from "./data";
+import axios from 'axios';
 
 export default defineComponent({
   setup(props, ctx) {
@@ -21,9 +21,8 @@ export default defineComponent({
     const tableRef = ref<InstanceType<typeof ElTable> | null>(null);
     const store = new AuditStore(); // 实例化状态类
     const formData = store.formData;
-    new Mool.engine({});
     useEffect(() => {
-    }, [formData.value.auditor])
+    }, [formData.value.auditor]);
     return () => (
       <>
         <div style={{ backgroundColor: "#f1f1f1" }}>
@@ -109,18 +108,25 @@ export default defineComponent({
               v-loading={state.loading}
               ref={tableRef}
               headerCellStyle={{ background: "#f5f6f7", color: "rgba(0,0,0,.7)" }}
-              data={store.tableData}
+              data={store.tableData.value}
               border
             >
               {state.columns?.map((item, index) => (
-                <ElTableColumn key={index} label={item.title} prop={item.dataIndex} {...item}>
-                  <template slot-scope="scope">
-                    {item.render ? (
-                      <item.render index={scope.$index} scope={scope} rowData={scope.row[item.dataIndex]} item={item} />
-                    ) : (
-                      item.codeItem && item.dataIndex && item.codeItem[scope.row[item.dataIndex]]
-                    )}
-                  </template>
+                <ElTableColumn key={index} label={item.title} prop={item.dataIndex} {...item}
+                  v-slots={
+                    {
+                      'slot-scope': (scope) => {
+                        {
+                          item.render ? (
+                            <item.render index={scope.$index} scope={scope} rowData={scope.row[item.dataIndex]} item={item} />
+                          ) : (
+                          item.codeItem && item.dataIndex && item.codeItem[scope.row[item.dataIndex]]
+                        )
+                        }
+                      }
+                    }
+                  }
+                >
                 </ElTableColumn>
               ))}
             </ElTable>

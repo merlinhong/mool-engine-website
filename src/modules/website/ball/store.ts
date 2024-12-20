@@ -26,7 +26,7 @@ export class AuditStore {
 
   public initData: FormaData = { ...this.formData.value };
 
-  public tableData: any[] = [];
+  public tableData = ref([]);
 
   private searchParams: Ref<DEFAULTSETTING> = ref({
     url: "/audit/v1/list",
@@ -42,7 +42,6 @@ export class AuditStore {
    * 重置表单
    */
   reset = () => {
-    service.api.codeItem({ id: "1" });
     Object.assign(this.formData.value, this.initData);
     console.log(this.formData.value);
   };
@@ -56,8 +55,10 @@ export class AuditStore {
     params.data = {
       ...Object.fromEntries(Object.entries(data).filter(([key, value]) => value !== "")),
     };
-    service.audit.search(params.data).then((res) => {
-      this.tableData = format ? format(res) : res.data.rows;
+    service.pushRecord.list(params.data).then((res) => {
+      console.log(res);
+      this.tableData.value = format ? format(res) : res.data.result;
+      
     });
   };
 }

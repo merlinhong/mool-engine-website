@@ -7,7 +7,7 @@ declare global {
     
     audit: typeof import("./src/service/audit")['default'];
     
-    bb: typeof import("./src/service/bb")['default'];
+    push: typeof import("./src/service/push")['default'];
     
     pushRecord: typeof import("./src/service/pushRecord")['default'];
     

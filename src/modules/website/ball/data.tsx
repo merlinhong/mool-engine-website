@@ -49,11 +49,6 @@ export const state = reactive<{ columns?: SearchTableColumn[];[key: string]: any
             align: "center",
         },
         {
-            title: "审核人",
-            dataIndex: "auditor",
-            align: "center",
-        },
-        {
             title: "审核时间",
             dataIndex: "auditTime",
             align: "center",

@@ -1,4 +1,3 @@
-console.log(import("./ball/ball"));
 
 export default {
   pages: [

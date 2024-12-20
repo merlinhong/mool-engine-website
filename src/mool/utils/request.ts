@@ -1,6 +1,3 @@
-
-
-
 import axios, {
   AxiosRequestConfig,
   AxiosProgressEvent,
@@ -13,12 +10,43 @@ import axios, {
   CreateAxiosDefaults,
 } from "axios";
 import qs from "qs";
-import { isUndefined, isPlainObject, deepMerge } from "./index.js";
+import { isPlainObject } from "./index.js";
+import MockAdapter from "axios-mock-adapter";
+
+function capitalize<T extends keyof HttpMethodMap>(str: T) {
+  if (typeof str !== "string") {
+    return str; // 如果不是字符串，直接返回原字符串
+  }
+  const firstLetter = str.charAt(0).toUpperCase(); // 首字母大写
+  const restOfString = str.slice(1).toLowerCase(); // 其余部分小写
+  return (firstLetter + restOfString) as CapitalizeHttpMethod<T>; // 拼接并返回
+}
+type CapitalizeHttpMethod<T extends keyof HttpMethodMap> = T extends keyof HttpMethodMap ? HttpMethodMap[T] : never;
 
 type CommonResponse<T = any> = {
   code: number;
   data: T;
   msg: string;
+};
+type HttpMethodMap = {
+  get: "Get";
+  GET: "Get";
+  delete: "Delete";
+  DELETE: "Delete";
+  head: "Head";
+  HEAD: "Head";
+  options: "Options";
+  OPTIONS: "Options";
+  post: "Post";
+  POST: "Post";
+  put: "Put";
+  PUT: "Put";
+  patch: "Patch";
+  PATCH: "Patch";
+  link: "Link";
+  LINK: "Link";
+  unlink: "Unlink";
+  UNLINK: "Unlink";
 };
 
 export enum StateEnum {
@@ -49,10 +77,14 @@ const defaultSettings: DEFAULTSETTING = {
 
 interface DEFAULTSETTING<T = any, K = Record<string, any>> {
   /**
+   * mock
+   */
+  mock?: Record<string, any> | Parameters<MockAdapter.RequestHandler["reply"]>;
+  /**
    * default `'post'`
    * 请求类型
    * */
-  type?: string;
+  type?: keyof HttpMethodMap;
   /**请求路径 */
   url: string;
   /**请求体 */
@@ -181,7 +213,7 @@ class ApiService<
   private loadModules(): ServiceModules {
     // 自动导入所有模块
     const moduleFiles = import.meta.glob<{ default: IUrlConfig }>("/src/service/!(index).ts", { eager: true });
-    console.log(3333,moduleFiles);
+    console.log(3333, moduleFiles);
 
     const modules = {} as Record<string, IUrlConfig>;
 
@@ -260,6 +292,8 @@ class ApiService<
   // 请求方法
   async request<K = L>(options: DEFAULTSETTING<keyof IViteKeys<T, G>>): Promise<K> {
     const config = this.mergeConfig(options);
+    console.log(config);
+
     const params: AxiosRequestConfig = {
       url: config.url,
       method: config.type,
@@ -269,6 +303,7 @@ class ApiService<
       withCredentials: config.withCredentials,
       onUploadProgress: config.uploading,
       onDownloadProgress: config.downloading,
+      baseURL: this.baseURL,
     };
     if (config.root) {
       params.baseURL = this._env[config.root] ?? "";
@@ -284,13 +319,19 @@ class ApiService<
         params.data = JSON.stringify(config.data);
       }
     }
-    console.log(params);
-
+    
     return new Promise((resolve, reject) => {
       this.axiosInstance(params)
-        .then((response) => {
+        .then((response) => { 
+          console.log(response);
+          if(config.mock){
+            response.data = {...response};
+            response.status = 200;
+          }
           const { status, data } = response;
-          if (status !== 200 || data.code !== StateEnum.OK) {
+          console.log(status,data);
+          
+          if (status !== 200 ) {
             reject(data);
             config.error && config.error(data);
           } else {
@@ -307,6 +348,8 @@ class ApiService<
         });
     });
   }
+
+  requestMock<K = L>(options: DEFAULTSETTING<keyof IViteKeys<T, G>>): Promise<K> {}
 
   // 自定义请求拦截器
   setRequestInterceptor(interceptor: Parameters<AxiosInterceptorManager<InternalAxiosRequestConfig<any>>["use"]>) {

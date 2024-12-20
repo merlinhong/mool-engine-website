@@ -173,6 +173,7 @@ const options: TypedOptions = {
     }, 2000);
   },
 };
+
 onMounted(() => {
   window.particlesJS.load("container_bg", new URL("../particles.json", import.meta.url).href, function () {
     console.log("回调 - particles.js 配置已加载");

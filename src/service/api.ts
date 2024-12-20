@@ -1,7 +1,5 @@
-import type { IApiConfig } from "./"
-export default{
-    codeItem:{
-        url:'/api',
-        data:{}as {id:string}
-    }
-} satisfies IApiConfig
+export default {
+  rr: {
+    url: "/mock/api/getStatusList",
+  },
+};

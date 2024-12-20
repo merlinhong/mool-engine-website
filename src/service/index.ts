@@ -1,5 +1,4 @@
 import ApiService, { type IConfig, IRootKeys, IUrlConfig, createServiceWithModules } from "@/mool/utils/request";
-
 // 自定义配置
 const config = {
   env: import.meta.env,

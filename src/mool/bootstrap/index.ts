@@ -1,7 +1,7 @@
 import { createPinia } from "pinia";
 import { App } from "vue";
 import { createModule } from "./module";
-import zhCn from "element-plus/dist/locale/zh-cn.mjs";
+// import zhCn from "element-plus/dist/locale/zh-cn.mjs";
 import ElementPlus from "element-plus";
 import { router } from "../router";
 import { Loading } from "../utils";
@@ -12,9 +12,9 @@ export async function bootstrap(app: App) {
   // pinia
   app.use(createPinia());
 
-  app.use(ElementPlus, {
-    locale: zhCn,
-  });
+  // app.use(ElementPlus, {
+  //   locale: zhCn,
+  // });
   // 路由
   app.use(router);
 

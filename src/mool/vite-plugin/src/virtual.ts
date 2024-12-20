@@ -33,7 +33,6 @@ export async function virtual(): Promise<Plugin> {
     async load(id) {
       if (id == "\0virtual:svg-register") {
         const { code } = await createSvg();
-
         return code;
       }
     },

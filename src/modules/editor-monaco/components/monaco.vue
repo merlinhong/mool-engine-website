@@ -15,11 +15,11 @@ import { nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { isObject, merge } from "lodash-es";
 import { useMool } from "@/mool";
 import { parsePx } from "@/mool/utils";
-import * as monaco from "monaco-editor";
 import "../utils/worker";
 import "../utils/theme";
 import "../utils/config";
 import { useFormat } from "../utils/format";
+const monaco = await import('monaco-editor');
 defineOptions({
 	name: "MlEditorMonaco"
 });
