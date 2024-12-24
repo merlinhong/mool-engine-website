@@ -3,17 +3,21 @@ export {};
 declare global {
   interface ServiceTypes {
     
-    api: typeof import("./src/service/api")['default'];
+    api: typeof import("src/service/api")['default'];
     
-    audit: typeof import("./src/service/audit")['default'];
+    audit: typeof import("src/service/audit")['default'];
     
-    push: typeof import("./src/service/push")['default'];
+    c: typeof import("src/service/c")['default'];
     
-    pushRecord: typeof import("./src/service/pushRecord")['default'];
+    gg: typeof import("src/service/gg")['default'];
     
-    shopping: typeof import("./src/service/shopping")['default'];
+    push: typeof import("src/service/push")['default'];
     
-    user: typeof import("./src/service/user")['default'];
+    pushRecord: typeof import("src/service/pushRecord")['default'];
+    
+    shopping: typeof import("src/service/shopping")['default'];
+    
+    user: typeof import("src/service/user")['default'];
     
   };
 };

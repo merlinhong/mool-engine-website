@@ -1,4 +1,4 @@
-import { access, readdirSync } from 'fs';
+import { access, readdirSync } from "fs";
 import { defineConfig, loadEnv } from "vite";
 import { fileURLToPath, URL } from "node:url";
 import vue from "@vitejs/plugin-vue";
@@ -14,28 +14,26 @@ import seoPrerender from "vite-plugin-seo-prerender";
 // @ts-ignore
 import ElementPlus from "unplugin-element-plus/vite";
 import federation from "@originjs/vite-plugin-federation";
-
-import { mool,viteMockServe } from "./src/mool/vite-plugin/src/index";
+import { mool } from "./src/mool/vite-plugin/src/index";
 
 // import basicSsl from '@vitejs/plugin-basic-ssl'
 // import tailwindcss from 'tailwindcss'
 // import autoprefixer from 'autoprefixer'
-import { serviceTypesPlugin } from "./serviceTypesPlugin";
+import { servicePlugin } from "./src/mool/vite-plugin/src/service";
 function toPath(dir: string) {
   return fileURLToPath(new URL(dir, import.meta.url));
 }
 
 export default ({ mode }) => {
   const env = loadEnv(mode, process.cwd());
-  const optimizeDepsElementPlusIncludes = ['element-plus/es','lodash-es'];
-  readdirSync('node_modules/element-plus/es/components').map((name) => {
-    access(`node_modules/element-plus/es/components/${name}/style/css.mjs`,(err) =>{
-      if(!err){
-        optimizeDepsElementPlusIncludes.push(`element-plus/es/components/${name}/style/css`)
+  const optimizeDepsElementPlusIncludes = ["element-plus/es", "lodash-es"];
+  readdirSync("node_modules/element-plus/es/components").map((name) => {
+    access(`node_modules/element-plus/es/components/${name}/style/css.mjs`, (err) => {
+      if (!err) {
+        optimizeDepsElementPlusIncludes.push(`element-plus/es/components/${name}/style/css`);
       }
-    })
-    
-  })
+    });
+  });
   return defineConfig({
     base: "./",
     plugins: [
@@ -87,16 +85,15 @@ export default ({ mode }) => {
       //   },
       //   publicHtml: true,
       // }),
-      
-      serviceTypesPlugin({
+      servicePlugin({
         dts: "service.d.ts",
+        mock: {
+          ignore: /index.ts/,
+          mockPath: "./src/service",
+          enable: true,
+          watchFiles:true
+        },
       }),
-      viteMockServe({
-        ignore: /index.ts/,
-        mockPath: './src/service',
-        enable:true
-      }),
-     
     ],
     resolve: {
       alias: {
@@ -109,7 +106,7 @@ export default ({ mode }) => {
       modulePreload: {
         polyfill: true,
       },
-      
+
       minify: "esbuild",
       outDir: env.VITE_APP_OUTDIR,
       // terserOptions: {
@@ -120,8 +117,24 @@ export default ({ mode }) => {
       // },
       sourcemap: env.NODE_ENV === "development",
       rollupOptions: {
-        external: ['mf/vue','mf/pinia','mf/element-plus','mf/vue-router','mf/axios','mf/lodash-es','mf/@vue/shared','mf/element-plus/es','mf/mitt','mf/vue-i18n','mf/@vueuse/core','mf/monaco-editor','mf/store','mf/qs','mf/~icons/ep/avatar'],
-      }
+        external: [
+          "mf/vue",
+          "mf/pinia",
+          "mf/element-plus",
+          "mf/vue-router",
+          "mf/axios",
+          "mf/lodash-es",
+          "mf/@vue/shared",
+          "mf/element-plus/es",
+          "mf/mitt",
+          "mf/vue-i18n",
+          "mf/@vueuse/core",
+          "mf/monaco-editor",
+          "mf/store",
+          "mf/qs",
+          "mf/~icons/ep/avatar",
+        ],
+      },
 
       // rollupOptions: {
       //   output: {
@@ -180,7 +193,7 @@ export default ({ mode }) => {
     },
     optimizeDeps: {
       // 使用模块联邦来处理依赖
-      include: optimizeDepsElementPlusIncludes
+      include: optimizeDepsElementPlusIncludes,
     },
     preview: {
       host: "0.0.0.0",

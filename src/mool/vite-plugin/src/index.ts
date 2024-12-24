@@ -1,7 +1,6 @@
 import { virtual } from "./virtual";
 // import type { Config } from "../types";
 import { merge } from "lodash";
-export * from "./mock";
 export function mool() {
   // // 应用类型，admin | app
   // config.type = options.type;

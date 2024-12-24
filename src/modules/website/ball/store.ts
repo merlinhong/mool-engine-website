@@ -1,39 +1,32 @@
-// 定义表单数据类型
-interface FormaData {
-  bizType: string;
-  bizName: string;
-  auditStatus: string[];
-  createUser: string;
-  createStartTime: string;
-  createEndTime: string;
-  auditor: string;
-  auditStartTime: string;
-  auditEndTime: string;
-}
+import { ElMessageBox } from "element-plus";
+import { FormaData } from "./type";
 // 定义一个类来管理状态
-export class AuditStore {
-  public formData: Ref<FormaData> = ref({
+export const AuditStore = class {
+  public formData = ref<FormaData>({
     bizType: "",
     bizName: "",
     auditStartTime: "",
     auditEndTime: "",
     auditStatus: ["0"],
     createUser: "",
-    createStartTime: "",
+    createStartTime: "222",
     createEndTime: "",
     auditor: "",
   });
 
-  public initData: FormaData = { ...this.formData.value };
+  public initData = { ...this.formData.value } as FormaData;
 
-  public tableData = ref([]);
+  public tableData = ref<any[]>([]);
 
-  private searchParams: Ref<DEFAULTSETTING> = ref({
+  private searchParams = ref<DEFAULTSETTING>({
     url: "/audit/v1/list",
     data: {},
   });
   constructor() {}
 
+  /**
+   * 新增
+   */
   increment = () => {
     console.log(this);
   };
@@ -44,6 +37,13 @@ export class AuditStore {
   reset = () => {
     Object.assign(this.formData.value, this.initData);
     console.log(this.formData.value);
+    service.cancel("请求取消", () => {
+      return ElMessageBox.confirm("确定取消请求吗?", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning",
+      });
+    });
   };
   /**
    * 查询方法
@@ -58,7 +58,7 @@ export class AuditStore {
     service.pushRecord.list(params.data).then((res) => {
       console.log(res);
       this.tableData.value = format ? format(res) : res.data.result;
-      
     });
+    // axios.get('/mock/api/getStatusList').then(res=>console.log(res))
   };
-}
+};

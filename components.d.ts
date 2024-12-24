@@ -31,6 +31,7 @@ declare module 'vue' {
     ElSpace: typeof import('element-plus/es')['ElSpace']
     ElTabPane: typeof import('element-plus/es')['ElTabPane']
     ElTabs: typeof import('element-plus/es')['ElTabs']
+    ElText: typeof import('element-plus/es')['ElText']
     ElTooltip: typeof import('element-plus/es')['ElTooltip']
     IEpArrowRight: typeof import('~icons/ep/arrow-right')['default']
     IEpAvatar: typeof import('~icons/ep/avatar')['default']

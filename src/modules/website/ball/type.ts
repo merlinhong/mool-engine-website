@@ -20,3 +20,16 @@ export interface Pagination extends CreateMutable<PaginationProps> {
 export interface SearchParams<T = Record<string, any>[], K = any> extends AxiosRequestConfig {
   format?: (args: { data: T } & ApiResponse) => K[];
 }
+
+// 定义表单数据类型
+export interface FormaData {
+  bizType: string;
+  bizName: string;
+  auditStatus: string[];
+  createUser: string;
+  createStartTime: string;
+  createEndTime: string;
+  auditor: string;
+  auditStartTime: string;
+  auditEndTime: string;
+}

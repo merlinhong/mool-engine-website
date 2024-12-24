@@ -5,8 +5,18 @@ const config = {
   default: "VITE_APP_BASE_API",
 } as const satisfies IConfig<ImportMetaEnv>;
 
-
 export type IApiConfig = IUrlConfig<IRootKeys<typeof config>>;
 
 // 创建服务实例并直接应用类型
 export const service = createServiceWithModules(new ApiService(config));
+
+service.setResponseInterceptor(
+  (res) => {
+    return res;
+  },
+  (err) => {
+    console.log("error", err);
+    ElMessage.warning(err)
+    return err;
+  },
+);

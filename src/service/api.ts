@@ -1,5 +1,5 @@
 export default {
   rr: {
-    url: "/mock/api/getStatusList",
+    url: "/mock/api/getStatusLis2t",
   },
 };

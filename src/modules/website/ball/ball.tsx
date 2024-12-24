@@ -13,7 +13,6 @@ import {
   ElMessage,
 } from "element-plus";
 import { state } from "./data";
-import axios from 'axios';
 
 export default defineComponent({
   setup(props, ctx) {

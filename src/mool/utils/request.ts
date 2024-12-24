@@ -8,6 +8,7 @@ import axios, {
   AxiosInterceptorManager,
   RawAxiosRequestHeaders,
   CreateAxiosDefaults,
+  CanceledError,
 } from "axios";
 import qs from "qs";
 import { isPlainObject } from "./index.js";
@@ -59,6 +60,7 @@ export enum StateEnum {
   NOT_FOUND = 404,
   INTERNAL_SERVER_ERROR = 500,
   NOT_AUTH = 820101,
+  ERR_CANCELED = "ERR_CANCELED",
 }
 
 const defaultSettings: DEFAULTSETTING = {
@@ -129,6 +131,14 @@ interface DEFAULTSETTING<T = any, K = Record<string, any>> {
   error?: Function;
   /**请求完成回调 */
   complete?: Function;
+  /**
+   * 取消请求
+   */
+  cancelToken?: axios.CancelToken;
+  /**
+   * 信号
+   */
+  signal?: axios.GenericAbortSignal;
 }
 export type IRootKeys<T extends { env: any; default?: any }> = keyof IViteKeys<T["env"], T["default"]>;
 export type IUrlConfig<T = any, K = {}> = Record<string, DEFAULTSETTING<T, K>>;
@@ -178,7 +188,7 @@ class ApiService<
   private _env: Record<string, any>;
   private _default: string;
   private baseURL: string;
-
+  private complete: boolean = false;
   private Modules: M | ServiceModules;
 
   // 使用更灵活的索引签名
@@ -289,11 +299,24 @@ class ApiService<
     return { ...this.defaultSettings, ...options };
   }
 
+  /**
+   * 取消当前正在发起的请求
+   */
+  public cancel(msg?: string, confirm?: () => Promise<any>) {
+    if (this.complete || !this.source) return;
+    confirm?.().then(() => {
+      this.source.cancel(msg); // 取消请求
+    });
+  }
+
   // 请求方法
   async request<K = L>(options: DEFAULTSETTING<keyof IViteKeys<T, G>>): Promise<K> {
     const config = this.mergeConfig(options);
-    console.log(config);
-
+    // // 创建一个 AbortController 实例
+    // this.controller = new AbortController();
+    // const signal = this.controller.signal;
+    this.source = axios.CancelToken.source();
+    this.complete = false;
     const params: AxiosRequestConfig = {
       url: config.url,
       method: config.type,
@@ -304,6 +327,7 @@ class ApiService<
       onUploadProgress: config.uploading,
       onDownloadProgress: config.downloading,
       baseURL: this.baseURL,
+      cancelToken: this.source.token,
     };
     if (config.root) {
       params.baseURL = this._env[config.root] ?? "";
@@ -319,19 +343,15 @@ class ApiService<
         params.data = JSON.stringify(config.data);
       }
     }
-    
     return new Promise((resolve, reject) => {
       this.axiosInstance(params)
-        .then((response) => { 
-          console.log(response);
-          if(config.mock){
-            response.data = {...response};
-            response.status = 200;
+        .then((response: AxiosResponse | CanceledError<any>) => {
+          if (!response.status) {
+            (response as AxiosResponse).data = { ...response };
+            response.status = response.code || 200;
           }
-          const { status, data } = response;
-          console.log(status,data);
-          
-          if (status !== 200 ) {
+          const { status, data } = response as AxiosResponse;
+          if (status !== 200 || (response as CanceledError<any>).code == StateEnum.ERR_CANCELED) {
             reject(data);
             config.error && config.error(data);
           } else {
@@ -345,19 +365,18 @@ class ApiService<
         })
         .finally(() => {
           config.complete && config.complete();
+          this.complete = true;
         });
     });
   }
 
-  requestMock<K = L>(options: DEFAULTSETTING<keyof IViteKeys<T, G>>): Promise<K> {}
-
   // 自定义请求拦截器
-  setRequestInterceptor(interceptor: Parameters<AxiosInterceptorManager<InternalAxiosRequestConfig<any>>["use"]>) {
+  setRequestInterceptor(...interceptor: Parameters<AxiosInterceptorManager<InternalAxiosRequestConfig<any>>["use"]>) {
     this.axiosInstance.interceptors.request.use(...interceptor);
   }
 
   // 自定义响应拦截器
-  setResponseInterceptor(interceptor: Parameters<AxiosInterceptorManager<AxiosResponse<any, any>>["use"]>) {
+  setResponseInterceptor(...interceptor: Parameters<AxiosInterceptorManager<AxiosResponse<any, any>>["use"]>) {
     this.axiosInstance.interceptors.response.use(...interceptor);
   }
 

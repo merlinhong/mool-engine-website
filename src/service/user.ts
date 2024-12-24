@@ -3,7 +3,7 @@ import type { IApiConfig } from "./";
 
 export default {
   login: {
-    url: "/api/user/login",
+    url: "/api/user/login2",
     type: "post",
     data: {} as {
       username: string;

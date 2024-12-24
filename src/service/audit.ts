@@ -1,6 +1,6 @@
 export default {
   search: {
-    url: "/mock/audit/search",
+    url: "/mock/audit/search2",
     data: {} as any,
     mock:{
       rawResponse: async (req, res) => {
