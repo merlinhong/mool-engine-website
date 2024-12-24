@@ -13,6 +13,7 @@ import { IncomingMessage, NextHandleFunction } from "connect";
 import { bundleRequire, GetOutputFile, JS_EXT_RE } from "bundle-require";
 import { createServer, type ResolvedConfig } from "vite";
 import emitter from "./mitt";
+import { log } from "node:console";
 
 export let mockData: MockMethod[] = [];
 
@@ -73,6 +74,10 @@ export async function requestMiddleware(opt: ViteMockOptions) {
 
     if (matchRequest) {
       const isGet = req.method && req.method.toUpperCase() === "GET";
+      if(!matchRequest.mock){
+        loggerOutput("No found Mock", req.url!)
+        return res.end('')
+      }
       const {
         mock: { response, rawResponse, timeout, statusCode },
         url,

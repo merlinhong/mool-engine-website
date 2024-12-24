@@ -55,10 +55,11 @@ export const AuditStore = class {
     params.data = {
       ...Object.fromEntries(Object.entries(data).filter(([key, value]) => value !== "")),
     };
-    service.pushRecord.list(params.data).then((res) => {
-      console.log(res);
-      this.tableData.value = format ? format(res) : res.data.result;
-    });
+    // service.pushRecord.list(params.data).then((res) => {
+    //   console.log(res);
+    //   this.tableData.value = format ? format(res) : res.data.result;
+    // });
+    service.user.login({username:'11',password:'xxxxx'})
     // axios.get('/mock/api/getStatusList').then(res=>console.log(res))
   };
 };

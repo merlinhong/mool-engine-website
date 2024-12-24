@@ -304,9 +304,14 @@ class ApiService<
    */
   public cancel(msg?: string, confirm?: () => Promise<any>) {
     if (this.complete || !this.source) return;
-    confirm?.().then(() => {
-      this.source.cancel(msg); // 取消请求
-    });
+    if(confirm){
+      confirm().then(() => {
+        this.source.cancel(msg); // 取消请求
+      });
+    }else{
+      this.source.cancel(msg);
+    }
+    
   }
 
   // 请求方法

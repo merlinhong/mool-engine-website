@@ -6,21 +6,6 @@ export default {
     url: "/v1/query/333",
     data: {} as { name?: string },
     mock: {
-      // response: () => {
-      //   return Mock.mock({
-      //     data: {
-      //       "result|50": [
-      //         {
-      //           bizName: "@integer(3,100)",
-      //           auditTime: /170\d{10}/,
-      //           fff:5555,
-      //           createUser: "@boolean",
-      //           "auditStatus|1": [0, 1, 2, 3],
-      //         },
-      //       ],
-      //     },
-      //   });
-      // },
       rawResponse: async (req, res) => {
         let reqbody = "";
         await new Promise((resolve) => {
