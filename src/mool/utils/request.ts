@@ -12,7 +12,7 @@ import axios, {
 } from "axios";
 import qs from "qs";
 import { isPlainObject } from "./index.js";
-import MockAdapter from "axios-mock-adapter";
+import { IncomingMessage, ServerResponse } from "http";
 
 function capitalize<T extends keyof HttpMethodMap>(str: T) {
   if (typeof str !== "string") {
@@ -76,12 +76,51 @@ const defaultSettings: DEFAULTSETTING = {
   error: () => {},
   complete: () => {},
 };
+export interface RespThisType {
+  req: IncomingMessage;
+  res: ServerResponse;
+  parseJson: () => any;
+}
 
+// export type MethodType = "get" | "post" | "put" | "delete" | "patch";
+export type Recordable<T = any> = Record<string, T>;
 interface DEFAULTSETTING<T = any, K = Record<string, any>> {
   /**
-   * mock
+   * mock后端接口数据
    */
-  mock?: Record<string, any> | Parameters<MockAdapter.RequestHandler["reply"]>;
+  mock?: {
+    /**
+     * 设置响应时间
+     */
+    timeout?: number;
+    /**
+     * 自定义状态码
+     */
+    statusCode?: number;
+    /**
+     *  @default `'函数类型'`
+     * ((
+          this: RespThisType,
+          opt: { url: Recordable; body: Recordable; query: Recordable; headers: Recordable },
+        ) => any)
+     * 
+     *  @description 自定义返回响应数据
+     */
+    response?:
+      | ((
+          this: RespThisType,
+          opt: { url: Recordable; body: Recordable; query: Recordable; headers: Recordable },
+        ) => any)
+      | any;
+      /**
+       * 可自定义设置响应体
+       * @param this 响应实例类型
+       * @param req 请求体
+       * @param res 响应体
+       * @returns 
+       */
+    rawResponse?: (this: RespThisType, req: IncomingMessage, res: ServerResponse) => void;
+  };
   /**
    * default `'post'`
    * 请求类型
@@ -304,14 +343,13 @@ class ApiService<
    */
   public cancel(msg?: string, confirm?: () => Promise<any>) {
     if (this.complete || !this.source) return;
-    if(confirm){
+    if (confirm) {
       confirm().then(() => {
         this.source.cancel(msg); // 取消请求
       });
-    }else{
+    } else {
       this.source.cancel(msg);
     }
-    
   }
 
   // 请求方法

@@ -75,8 +75,10 @@ export async function requestMiddleware(opt: ViteMockOptions) {
     if (matchRequest) {
       const isGet = req.method && req.method.toUpperCase() === "GET";
       if(!matchRequest.mock){
-        loggerOutput("No found Mock", req.url!)
-        return res.end('')
+        loggerOutput("No found Mock", req.url!);
+        res.setHeader("Content-Type", "text/plain");
+        res.statusCode = 404;
+        return res.end('No found Mock')
       }
       const {
         mock: { response, rawResponse, timeout, statusCode },

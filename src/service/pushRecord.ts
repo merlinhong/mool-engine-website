@@ -6,6 +6,7 @@ export default {
     url: "/v1/query/333",
     data: {} as { name?: string },
     mock: {
+      response:'222',
       rawResponse: async (req, res) => {
         let reqbody = "";
         await new Promise((resolve) => {
@@ -41,6 +42,11 @@ export default {
   add: {
     url: "/v1/add",
     data: {} as { uuid: string },
+    mock:{
+      rawResponse(req, res) {
+        
+      },
+    }
   },
   export: {
     url: "/v1/export",
