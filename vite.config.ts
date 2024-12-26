@@ -19,7 +19,7 @@ import { mool } from "./src/mool/vite-plugin/src/index";
 // import basicSsl from '@vitejs/plugin-basic-ssl'
 // import tailwindcss from 'tailwindcss'
 // import autoprefixer from 'autoprefixer'
-import { servicePlugin } from "./src/mool/vite-plugin/src/service";
+import { Service } from "./src/mool/vite-plugin/src/service";
 function toPath(dir: string) {
   return fileURLToPath(new URL(dir, import.meta.url));
 }
@@ -63,7 +63,7 @@ export default ({ mode }) => {
           // Auto register icon components
           // 自动注册图标组件
           IconsResolver({
-            enabledCollections: ["ep"],
+            enabledCollections: ['ep'],
           }),
           ElementPlusResolver(),
         ],
@@ -85,11 +85,11 @@ export default ({ mode }) => {
       //   },
       //   publicHtml: true,
       // }),
-      servicePlugin({
+      Service({
+        path:'./src/service',
         dts: "service.d.ts",
         mock: {
           ignore: /index.ts/,
-          mockPath: "./src/service",
           enable: true,
           watchFiles:true
         },

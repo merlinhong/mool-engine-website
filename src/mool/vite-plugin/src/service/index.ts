@@ -7,23 +7,23 @@ import { ViteMockOptions } from "./types";
 import emitter from "./mitt";
 // 导出vite插件
 interface IOpt {
+  path?: string;
   mock: ViteMockOptions;
-  dts: string;
+  dts?: string;
 }
 
-
-const SERVICE_DIR = join(process.cwd(), "src", "service");
-function generateServiceTypes(path: string = "service.d.ts") {
-  const typesPath = join(process.cwd(), path);
+const getServiceDir = (path?: string) => join(process.cwd(), path ?? "./src/service");
+function generateServiceTypes(opt?: IOpt) {
+  const typesPath = join(process.cwd(), opt?.dts ?? "service.d.ts");
   const serviceFiles = fs
-    .readdirSync(SERVICE_DIR)
+    .readdirSync(getServiceDir(opt?.path))
     .filter((file) => file.endsWith(".ts") && file !== "index.ts")
     .map((file) => file.replace(".ts", ""));
 
   const moduleTypes = serviceFiles
     .map(
       (module) => `
-    ${module}: typeof import("src/service/${module}")['default'];
+    ${module}: typeof import("${opt?.path ?? "src/service"}/${module}")['default'];
     `,
     )
     .join("");
@@ -42,7 +42,11 @@ declare global {
 
 // 可以在构建或开发时调用此函数
 
-export function servicePlugin(opt: IOpt): Plugin[] {
+export function Service(opt?: IOpt): Plugin[] {
+  opt = opt || ({} as IOpt);
+  if (opt?.mock) {
+    opt.mock.mockPath = (opt.mock.mockPath ?? opt?.path) || "./src/service";
+  }
   let isDev = false;
   let config: ResolvedConfig;
   let timer: number | undefined = undefined;
@@ -70,12 +74,11 @@ export function servicePlugin(opt: IOpt): Plugin[] {
       configResolved(resolvedConfig) {
         config = resolvedConfig;
         isDev = config.command === "serve";
-        isDev && createMockServer(opt.mock, config);
-        
+        isDev && opt?.mock && createMockServer(opt.mock, config);
       },
 
       async configureServer(server) {
-        emitter.on('update',handleFileChange);
+        emitter.on("update", handleFileChange);
         function handleFileChange(msg) {
           schedule(() => {
             server.restart();
@@ -83,33 +86,33 @@ export function servicePlugin(opt: IOpt): Plugin[] {
         }
 
         // 监听 service 目录
-        const watcher = chokidar.watch(SERVICE_DIR, {
+        const watcher = chokidar.watch(getServiceDir(opt?.path), {
           ignored: /(^|[\/\\])\../, // 忽略隐藏文件
           persistent: true,
           depth: 1,
         });
         // 监听文件变化
         watcher.on("all", () => {
-          generateServiceTypes(opt?.dts);
+          generateServiceTypes(opt);
         });
 
-        const { enable = isDev } = opt.mock;
-        if (!enable) {
-          return;
+        if (opt?.mock) {
+          const { enable = isDev } = opt.mock;
+          if (!enable) {
+            return;
+          }
+          const middleware = await requestMiddleware(opt.mock);
+          server.middlewares.use(middleware);
         }
-        const middleware = await requestMiddleware(opt.mock);
-        server.middlewares.use(middleware);
 
         // 服务器关闭时关闭监听器
         server.httpServer?.on("close", () => {
           watcher.close();
         });
       },
-      handleHotUpdate(ctx) {
-        
-      },
+      handleHotUpdate(ctx) {},
       buildStart() {
-        generateServiceTypes(opt?.dts);
+        generateServiceTypes(opt);
       },
     },
   ];

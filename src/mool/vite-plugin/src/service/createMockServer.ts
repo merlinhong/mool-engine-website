@@ -137,7 +137,7 @@ function createWatch(opt: ViteMockOptions, config: ResolvedConfig) {
   }
 
   const { absConfigPath, absMockPath } = getPath(opt);
-
+  
   if (process.env.VITE_DISABLED_WATCH_MOCK === "true") {
     return;
   }
@@ -242,7 +242,7 @@ async function getMockConfig(opt: ViteMockOptions, config: ResolvedConfig) {
       }
       return true;
     });
-
+ 
   try {
     ret = [];
     const resolveModulePromiseList = [];
@@ -301,6 +301,9 @@ async function resolveModule(p: string, config: ResolvedConfig): Promise<any> {
 // get custom config file path and mock dir path
 function getPath(opt: ViteMockOptions) {
   const { mockPath, configPath } = opt;
+  if(!mockPath){
+    throw new Error('Not Found mock file')
+  }
   const cwd = process.cwd();
   const absMockPath = isAbsPath(mockPath) ? mockPath! : path.join(cwd, mockPath || "");
   const absConfigPath = path.join(cwd, configPath || "");
